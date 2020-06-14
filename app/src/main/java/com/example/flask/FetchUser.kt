@@ -52,7 +52,7 @@ class FetchUser : AppCompatActivity() {
                 }
 
                 override fun onResponse(call: Call, response: Response) {
-                    val imageUrl = response?.body()?.string().toString()
+                    var imageUrl = response?.body()?.string().toString()
                     if(imageUrl == "Not"){
                         runOnUiThread {
 
@@ -62,17 +62,29 @@ class FetchUser : AppCompatActivity() {
                             finish()
                         }
                     }
-                    runOnUiThread {
-                        progressBar.visibility = View.GONE
-                        image.visibility = View.VISIBLE
-                        Log.i("My_Error",imageUrl)
-                        val imageBytes = Base64.decode(imageUrl, Base64.DEFAULT)
-                        val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                        val resized =
-                            Bitmap.createScaledBitmap(decodedImage, 500, 500, true)
-                        image.setImageBitmap(resized)
+                    else{
+                        runOnUiThread {
+                            progressBar.visibility = View.GONE
+                            image.visibility = View.VISIBLE
+                            Log.i("My_Error",imageUrl)
+
+                            imageUrl.replace(" ","")
+                            val chk = imageUrl[0].toString()
+                            Log.i("My_Error", chk)
+                            if(chk == "b"){
+                                imageUrl = imageUrl.substring(2,imageUrl.length-1)
+                            }
+
+                            Log.i("My_Error",imageUrl)
+                            val imageBytes = Base64.decode(imageUrl, Base64.DEFAULT)
+                            val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                            val resized =
+                                Bitmap.createScaledBitmap(decodedImage, 500, 500, true)
+                            image.setImageBitmap(resized)
 //                        Picasso.get().load(imageUrl).resize(500,500).into(image)
+                        }
                     }
+
                 }
 
             })

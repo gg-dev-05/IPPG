@@ -19,6 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.*
 import java.io.IOException
+import java.util.concurrent.Callable
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,25 +47,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-//    private fun setStatusBar() {
-//        CoroutineScope(Main).launch {
-//            while(true){
-//                checkConnection()
-//            }
-//        }
-//    }
-//
-//    @SuppressLint("SetTextI18n")
-//    private fun checkConnection() {
-//        CoroutineScope(Main).launch {
-//            if(!isConnected){
-//                status.text = "Disconnected"
-//            }
-//            else{
-//                status.text = "Connected"
-//            }
-//        }
-//    }
 
      fun connectToServer(view: View) {
 
@@ -91,11 +73,30 @@ class MainActivity : AppCompatActivity() {
                             sendRequest.visibility = View.VISIBLE
 
                         }
+                        CoroutineScope(IO).launch {
+                            val request = Request.Builder()
+                                .url("${host}/loading")
+                                .build()
+
+                            val client = OkHttpClient()
+                            client.newCall(request).enqueue(object: Callback{
+                                override fun onFailure(call: Call, e: IOException) {
+                                    isConnected.postValue(false)
+                                }
+
+                                override fun onResponse(call: Call, response: Response) {
+                                    val loadingStrings = response.body()?.string().toString()
+                                    Log.i("My_Error",loadingStrings)
+                                }
+
+                            })
+                        }
 
 
                     }
                     else{
                         Log.i("My_Error","Connection Unsuccessful")
+                        isConnected.postValue(false)
                     }
                 }
 
