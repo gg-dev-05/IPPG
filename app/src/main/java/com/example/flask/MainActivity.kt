@@ -29,7 +29,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+    //TODO  Unable to handle multiple Requests
 
+        
         val globalclass: GlobalClass = applicationContext as GlobalClass
         globalclass.setHost(host)
 
