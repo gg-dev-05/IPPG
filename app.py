@@ -28,10 +28,11 @@ def handle_request():
 def func():
 	req = rq.get_json()
 	username = req['username']
+	username1 = "{}\n".format(username)
 	isSaved = False
 
 	with open('users.txt') as f:
-		result = re.findall('\\b'+username+'\\b', f.read(), flags=re.IGNORECASE)
+		result = re.findall('\\b'+username1+'\\b', f.read(), flags=re.IGNORECASE)
 		if(len(result) > 0):
 			isSaved = True
 
