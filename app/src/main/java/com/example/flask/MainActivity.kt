@@ -1,35 +1,34 @@
 package com.example.flask
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.*
 import java.io.IOException
-import java.util.concurrent.Callable
 
 class MainActivity : AppCompatActivity() {
 
     val host = "http://192.168.43.37:5000"
-
+    val client = OkHttpClient()
     private var isConnected: MutableLiveData<Boolean> = MutableLiveData()
     var loadingStrings = ""
+    var dotsString = ""
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
 
         val globalclass: GlobalClass = applicationContext as GlobalClass
         globalclass.setHost(host)
@@ -50,15 +49,17 @@ class MainActivity : AppCompatActivity() {
 
      fun connectToServer(view: View) {
 
+        isConnected.postValue(false)
         CoroutineScope(IO).launch {
             val request = Request.Builder()
                     .url(host)
                     .build()
 
-            val client = OkHttpClient()
+
             client.newCall(request).enqueue(object: Callback{
+                @SuppressLint("SetTextI18n")
                 override fun onFailure(call: Call, e: IOException) {
-                    Log.i("My_Error",e.toString())
+                    Log.i("My_Error","error from e ${e.toString()}")
                     isConnected.postValue(false)
                     userWelcome.text = "Sorry Server Not Responding"
                 }
@@ -74,12 +75,12 @@ class MainActivity : AppCompatActivity() {
 
                         }
                         CoroutineScope(IO).launch {
-                            val request = Request.Builder()
+                            val request1 = Request.Builder()
                                 .url("${host}/loading")
                                 .build()
 
-                            val client = OkHttpClient()
-                            client.newCall(request).enqueue(object: Callback{
+                            
+                            client.newCall(request1).enqueue(object: Callback{
                                 override fun onFailure(call: Call, e: IOException) {
                                     isConnected.postValue(false)
                                 }
@@ -87,7 +88,27 @@ class MainActivity : AppCompatActivity() {
                                 override fun onResponse(call: Call, response: Response) {
                                     val loadingStr = response.body()?.string().toString()
                                     loadingStrings = loadingStr
-                                    Log.i("My_Error",loadingStrings)
+                                    //Log.i("My_Error",loadingStrings)
+                                }
+
+                            })
+                        }
+
+                        CoroutineScope(IO).launch {
+                            val request2 = Request.Builder()
+                                .url("${host}/dots")
+                                .build()
+
+
+                            client.newCall(request2).enqueue(object: Callback{
+                                override fun onFailure(call: Call, e: IOException) {
+                                    isConnected.postValue(false)
+                                }
+
+                                override fun onResponse(call: Call, response: Response) {
+                                    val dotsStr = response.body()?.string().toString()
+                                    dotsString = dotsStr
+                                    //Log.i("My_Error",dotsString)
                                 }
 
                             })
@@ -123,6 +144,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this,FetchUser::class.java)
             intent.putExtra("username",userInput.text)
             intent.putExtra("loadingStrings",loadingStrings)
+            intent.putExtra("dotsString",dotsString)
             startActivity(intent)
         }
     }
