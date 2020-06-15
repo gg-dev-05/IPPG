@@ -49,5 +49,30 @@ _bhanupriya.singh_
 photo_fantaastic
 stipmeme
 _meme_media
+<<<<<<< HEAD
 helloworld
 hello
+=======
+garvit
+har
+qweety
+loo
+farrhad
+hhhhh
+data
+yhvgg
+ggggg
+hellooa
+garvv
+hellowm
+ashish_raj_19
+ashish_r_19
+noobie
+pewds
+dream
+marvel
+programmer
+iiti_meme_udhyog
+helloWorld
+garv
+>>>>>>> v2.1

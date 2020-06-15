@@ -19,10 +19,41 @@ import re
 
 app = flask.Flask(__name__)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def handle_request():
 	return "connected"
 
+@app.route('/loading', methods=['GET'])
+def loader():
+	loadingStrings = [
+		"Sending Data to Server",
+		"Searching in saved Files",
+		"Running Flask App",
+		"Accessing DataBase",
+		"Verifying Username",
+		"Accessing Instagram",
+		"Loading Webpage",
+		"Searching Username",
+		"Searching For Image",
+		"Getting Image",
+		"Bringing Image from Server",
+		"Downloading Image",
+		"Please Wait"
+	]
+	loading = ",".join(loadingStrings)
+	return loading
+
+@app.route('/dots', methods=['GET'])
+def dots():
+	loadingStrings = [
+		".",
+		"..",
+		"...",
+		"....",
+		"....."
+	]
+	dots = ",".join(loadingStrings)
+	return dots
 	
 @app.route('/app', methods=['POST'])
 def func():
@@ -31,6 +62,7 @@ def func():
 	username1 = "{}\n".format(username)
 	isSaved = False
 
+	username1 = "{}".format(username)
 	with open('users.txt') as f:
 		result = re.findall('\\b'+username1+'\\b', f.read(), flags=re.IGNORECASE)
 		if(len(result) > 0):
