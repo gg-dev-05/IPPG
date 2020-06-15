@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
     val host = "http://192.168.43.37:5000"
 
     private var isConnected: MutableLiveData<Boolean> = MutableLiveData()
-
+    var loadingStrings = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -85,7 +85,8 @@ class MainActivity : AppCompatActivity() {
                                 }
 
                                 override fun onResponse(call: Call, response: Response) {
-                                    val loadingStrings = response.body()?.string().toString()
+                                    val loadingStr = response.body()?.string().toString()
+                                    loadingStrings = loadingStr
                                     Log.i("My_Error",loadingStrings)
                                 }
 
@@ -121,6 +122,7 @@ class MainActivity : AppCompatActivity() {
         else{
             val intent = Intent(this,FetchUser::class.java)
             intent.putExtra("username",userInput.text)
+            intent.putExtra("loadingStrings",loadingStrings)
             startActivity(intent)
         }
     }

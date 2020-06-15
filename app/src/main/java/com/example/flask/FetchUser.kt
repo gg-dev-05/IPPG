@@ -27,7 +27,9 @@ class FetchUser : AppCompatActivity() {
         val globalclass: GlobalClass = applicationContext as GlobalClass
         val host = globalclass.getHost()
         val user = intent.extras?.get("username").toString()
+        val loading = intent.extras?.get("loadingStrings").toString()
         userName.text = "@${user}"
+
 
 //        Toast.makeText(applicationContext,"${host}/app",Toast.LENGTH_SHORT).show()
         val jsonObj = JSONObject()
