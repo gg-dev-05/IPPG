@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_fetch_user.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
@@ -22,18 +23,29 @@ import java.util.concurrent.TimeUnit
 
 
 class FetchUser : AppCompatActivity() {
+
+    var userData = ""
+    var loading = ""
+    var dots = ""
+    var Host: String = ""
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fetch_user)
-
-        val globalclass: GlobalClass = applicationContext as GlobalClass
-        val host = globalclass.getHost()
         val user = intent.extras?.get("username").toString()
-        val loading = intent.extras?.get("loadingStrings").toString()
-        val dots = intent.extras?.get("dotsString").toString()
+        userData = user
+        val globalclass: GlobalClass = applicationContext as GlobalClass
+        val host = globalclass.getHost().also {
+            Host = it.toString()
+        }
+
+        val update = intent.extras?.getBoolean("update")
+        loading = intent.extras?.get("loadingStrings").toString()
+        dots = intent.extras?.get("dotsString").toString()
         val loadinglist: List<String> = loading.split(",").map { it.trim() }
         val dotslist: List<String> = dots.split(",").map{ it.trim() }
+
+        //shows the loading strings
         CoroutineScope(Main).launch {
             for (load in loadinglist){
                 loading_view.text = load
@@ -42,6 +54,7 @@ class FetchUser : AppCompatActivity() {
 
         }
 
+        //shows the dots strings
         CoroutineScope(Main).launch {
             while(true){
                 for (dot in dotslist){
@@ -58,6 +71,13 @@ class FetchUser : AppCompatActivity() {
 //        Toast.makeText(applicationContext,"${host}/app",Toast.LENGTH_SHORT).show()
         val jsonObj = JSONObject()
         jsonObj.put("username",user)
+        if(update!!){
+            jsonObj.put("update",true)
+        }
+        else{
+            jsonObj.put("update",false)
+        }
+
         val mediatype = MediaType.parse("application/json; charset=utf-8")
         val send = Request.Builder()
             .url("${host}/app")
@@ -75,6 +95,9 @@ class FetchUser : AppCompatActivity() {
                     loading_view.visibility = View.GONE
 
                     Toast.makeText(this@FetchUser,"Server Not Responding", Toast.LENGTH_LONG).show()
+                    val intent = Intent(this@FetchUser, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 }
 
             }
@@ -87,7 +110,6 @@ class FetchUser : AppCompatActivity() {
                         Toast.makeText(this@FetchUser,"${userName.text} does not exist", Toast.LENGTH_LONG).show()
                         val intent = Intent(this@FetchUser, MainActivity::class.java)
                         startActivity(intent)
-
                         finish()
                     }
                 }
@@ -98,6 +120,7 @@ class FetchUser : AppCompatActivity() {
                         loading_view.visibility = View.GONE
 
                         image.visibility = View.VISIBLE
+                        updateButton.visibility = View.VISIBLE
 
                         Log.i("My_Error",imageUrl)
 
@@ -122,5 +145,16 @@ class FetchUser : AppCompatActivity() {
         })
 
 
+    }
+
+    fun update(view: View) {
+
+        val intent = Intent(this, FetchUser::class.java)
+        intent.putExtra("update",true)
+        intent.putExtra("username",userData)
+        intent.putExtra("loadingStrings",loading)
+        intent.putExtra("dotsString",dots)
+        startActivity(intent)
+        finish()
     }
 }

@@ -54,19 +54,55 @@ def dots():
 	]
 	dots = ",".join(loadingStrings)
 	return dots
-	
+
+
+def updateFunc(username):
+	# req = rq.get_json()
+	# username = req['username']
+	username1 = "{}\n".format(username)
+	with open('users.txt','r+') as fin:
+		with open('out.txt','w+') as fout:
+			for line in fin:
+				fout.write(line.replace(username1,""))
+
+	os.rename("users.txt", 'temp')
+	os.rename("out.txt", "users.txt")
+	os.rename('temp', "out.txt")
+
+	with open('usernames.txt', 'r+') as fin:
+		with open('out.txt', 'w+') as fout:
+			for line in fin:
+				name,var = line.partition("=")[::2]
+				if(name == username+" "):
+					fout.write("")
+				else:
+					fout.write(line)
+
+	os.rename("usernames.txt", 'temp')
+	os.rename("out.txt", "usernames.txt")
+	os.rename('temp', "out.txt")
+
+	os.remove('out.txt')
+
+
+
 @app.route('/app', methods=['POST'])
 def func():
 	req = rq.get_json()
 	username = req['username']
+	update = req['update']
+	if(update):
+		updateFunc(username)
+
 	username1 = "{}\n".format(username)
 	isSaved = False
 
-	username1 = "{}".format(username)
-	with open('users.txt') as f:
-		result = re.findall('\\b'+username1+'\\b', f.read(), flags=re.IGNORECASE)
-		if(len(result) > 0):
-			isSaved = True
+	# username1 = "{}".format(username)
+	if(not update):
+		with open('users.txt') as f:
+			result = re.findall(username1, f.read(), flags=re.IGNORECASE)
+			if(len(result) > 0):
+				isSaved = True
 
 	if(isSaved):
 		print("Sending From Saved Data")

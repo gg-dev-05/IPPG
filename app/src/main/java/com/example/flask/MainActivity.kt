@@ -12,11 +12,12 @@ import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
     val host = "http://192.168.43.37:5000"
-    val client = OkHttpClient()
+    val client: OkHttpClient = OkHttpClient.Builder().readTimeout(2, TimeUnit.SECONDS).connectTimeout(2, TimeUnit.SECONDS).build()
     private var isConnected: MutableLiveData<Boolean> = MutableLiveData()
     var loadingStrings = ""
     var dotsString = ""
@@ -61,11 +62,18 @@ class MainActivity : AppCompatActivity() {
                 isConnected.postValue(false)
                 runOnUiThread {
                     userWelcome.text = "Sorry Server Not Responding"
+                    Toast.makeText(this@MainActivity,"Try Again Later", Toast.LENGTH_LONG).show()
                 }
+
 
             }
 
             override fun onResponse(call: Call, response: Response) {
+                if(!response.isSuccessful){
+                    Log.i("My_Error","Connection Unsuccessful")
+                    Toast.makeText(this@MainActivity,"Server not responding", Toast.LENGTH_LONG).show()
+                    isConnected.postValue(false)
+                }
                 if(response.body()?.string().toString() == "connected"){
                     isConnected.postValue(true)
                     runOnUiThread {
@@ -118,6 +126,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 else{
                     Log.i("My_Error","Connection Unsuccessful")
+                    Toast.makeText(this@MainActivity,"Server not responding", Toast.LENGTH_LONG).show()
                     isConnected.postValue(false)
                 }
             }
@@ -142,6 +151,8 @@ class MainActivity : AppCompatActivity() {
         }
         else{
             val intent = Intent(this,FetchUser::class.java)
+            Log.i("My_Error","${userInput.text}, $loadingStrings, $dotsString")
+            intent.putExtra("update",false)
             intent.putExtra("username",userInput.text)
             intent.putExtra("loadingStrings",loadingStrings)
             intent.putExtra("dotsString",dotsString)
