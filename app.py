@@ -19,10 +19,12 @@ import re
 
 app = flask.Flask(__name__)
 
+#to check the connection
 @app.route('/', methods=['GET'])
 def handle_request():
 	return "connected"
 
+#these are the loading strings which are shown on the user screen while webdriver is running
 @app.route('/loading', methods=['GET'])
 def loader():
 	loadingStrings = [
@@ -55,7 +57,7 @@ def dots():
 	dots = ",".join(loadingStrings)
 	return dots
 
-
+#this function deletes the username from the users.txt and usernames.txt files
 def updateFunc(username):
 	# req = rq.get_json()
 	# username = req['username']
@@ -85,7 +87,7 @@ def updateFunc(username):
 	os.remove('out.txt')
 
 
-
+#the main method
 @app.route('/app', methods=['POST'])
 def func():
 

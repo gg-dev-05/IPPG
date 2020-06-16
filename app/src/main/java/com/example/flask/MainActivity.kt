@@ -16,9 +16,11 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
+    //replace host with the IPv4 address of the machine which runs the server i.e app.py script
     val host = "http://192.168.43.37:5000"
     val client: OkHttpClient = OkHttpClient.Builder().readTimeout(2, TimeUnit.SECONDS).connectTimeout(2, TimeUnit.SECONDS).build()
     private var isConnected: MutableLiveData<Boolean> = MutableLiveData()
+    //these two strings hold the strings to show at the time of loading
     var loadingStrings = ""
     var dotsString = ""
     @SuppressLint("SetTextI18n")
@@ -26,12 +28,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-    //TODO  Unable to handle multiple Requests
+
 
         
         val globalclass: GlobalClass = applicationContext as GlobalClass
         globalclass.setHost(host)
 
+        //observer observes the value of isConnected
         isConnected.observe(this, Observer {
             newValue ->
             if(!newValue){

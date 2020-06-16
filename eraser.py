@@ -1,5 +1,6 @@
 import os
 
+#replace dir_name with the current directory where the app.py is saving the images
 dir_name = "D:/Projects/Flask"
 test = os.listdir(dir_name)
 
@@ -24,6 +25,8 @@ for line in open("usernames.txt", "r"):
         lines_seen.add(line)
 outfile.close()
 
+#these two blocks removes the duplicates in users.txt and usernames1.txt which may come
+#due to multiple requests from the user
 os.rename("users.txt", 'temp')
 os.rename("users1.txt", "users.txt")
 os.rename('temp', "users1.txt")
