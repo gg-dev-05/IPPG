@@ -88,6 +88,9 @@ def updateFunc(username):
 
 @app.route('/app', methods=['POST'])
 def func():
+
+
+
 	req = rq.get_json()
 	username = req['username']
 	update = req['update']
@@ -151,6 +154,7 @@ def func():
 				# out.show()
 				image_of_user = "{}.jpg".format(username)
 				urllib.request.urlretrieve(url, image_of_user)
+
 				with open(image_of_user,"rb") as imageFile:
 					stri = base64.b64encode(imageFile.read())
 

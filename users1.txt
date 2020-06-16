@@ -58,3 +58,5 @@ newuser1
 newuser2
 newuser3
 nobita
+instagram
+facebook
