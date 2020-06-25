@@ -10,3 +10,4 @@ An android app to fetch the profile picture of a user from instagram.
 
 
 <i>The user may download the <b>apk</b> of the app and run the <b>app.py</b> file to start the server</i>
+<b>NOTE: apk file may not work for some users.</b>
